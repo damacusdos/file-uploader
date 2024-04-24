@@ -2,7 +2,12 @@
 import FileSVG from "@assets/File.svg?react";
 import RetrySVG from "@assets/Retry.svg?react";
 
-export const ErrorFile = () => {
+interface ErrorFileProps {
+  fileName: string;
+  fileSize: number;
+}
+
+export const ErrorFile = ({ fileName, fileSize }: ErrorFileProps) => {
   return (
     <div className="w-[440px] flex items-center gap-x-3 bg-white rounded-lg p-2 shadow-16">
       {/* left */}
@@ -14,9 +19,9 @@ export const ErrorFile = () => {
         <div className="mb-1 flex justify-between items-start">
           <div>
             <h1 className="font-bold text-sm text-[#575361] mb-[2px]">
-              Scan.pdf
+              {fileName}
             </h1>
-            <p className="text-xs text-[#857E95]">30 MB</p>
+            <p className="text-xs text-[#857E95]">{`${fileSize} MB`}</p>
           </div>
           <button className="text-[#794FED]">
             <RetrySVG />

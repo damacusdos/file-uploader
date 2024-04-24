@@ -2,7 +2,19 @@
 import FileSVG from "@assets/File.svg?react";
 import CancelSVG from "@assets/Cancel.svg?react";
 
-export const UploadingFile = () => {
+interface UploadingFileProps {
+  fileName: string;
+  currentSize: number;
+  totalSize: number;
+  progress: number;
+}
+
+export const UploadingFile = ({
+  fileName,
+  currentSize,
+  totalSize,
+  progress,
+}: UploadingFileProps) => {
   return (
     <div className="w-[440px] flex items-center gap-x-3 bg-white rounded-lg p-2 shadow-16">
       {/* left */}
@@ -14,9 +26,9 @@ export const UploadingFile = () => {
         <div className="mb-1 flex justify-between items-start">
           <div>
             <h1 className="font-bold text-sm text-[#575361] mb-[2px]">
-              Scan.pdf
+              {fileName}
             </h1>
-            <p className="text-xs text-[#857E95]">30 MB / 65 MB</p>
+            <p className="text-xs text-[#857E95]">{`${currentSize} MB / ${totalSize} MB`}</p>
           </div>
           <button className="text-[#794FED]">
             <CancelSVG />
@@ -27,7 +39,7 @@ export const UploadingFile = () => {
           <div className="bg-[#E3E3ED] h-2 w-[324px] rounded-lg overflow-hidden">
             <div className="bg-[linear-gradient(to_right,rgba(58,97,237,.5),#7C3AED)] h-2 w-[50%]"></div>
           </div>
-          <p className="text-xs w-8 text-[#9892A6]">50%</p>
+          <p className="text-xs w-8 text-[#9892A6]">{`${progress}%`}</p>
         </div>
       </div>
     </div>
