@@ -4,14 +4,17 @@ import { HTML5Backend, NativeTypes } from "react-dnd-html5-backend";
 // icons
 import CloudArrowUp from "@assets/CloudArrowUp.svg?react";
 
-export const Uploader = () => {
+interface UploaderProps {
+  onUpload: (files: File[]) => void;
+}
+
+export const Uploader = ({ onUpload }: UploaderProps) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [NativeTypes.FILE],
-    drop(items) {
-      // TODO: handle upload files
-      console.log(items);
+    drop(item: { dataTransfer: DataTransfer; files: File[] }) {
+      onUpload(item.files);
     },
     collect(monitor) {
       return {
@@ -42,10 +45,14 @@ export const Uploader = () => {
   );
 };
 
-export const DnDUploader = () => {
+interface DnDUploaderProps {
+  onUpload: (files: File[]) => void;
+}
+
+export const DnDUploader = ({ onUpload }: DnDUploaderProps) => {
   return (
     <DndProvider backend={HTML5Backend}>
-      <Uploader />
+      <Uploader onUpload={onUpload} />
     </DndProvider>
   );
 };

@@ -4,8 +4,8 @@ import CancelSVG from "@assets/Cancel.svg?react";
 
 interface UploadingFileProps {
   fileName: string;
-  currentSize: number;
-  totalSize: number;
+  currentSize: string;
+  totalSize: string;
   progress: number;
 }
 
@@ -28,7 +28,7 @@ export const UploadingFile = ({
             <h1 className="font-bold text-sm text-[#575361] mb-[2px]">
               {fileName}
             </h1>
-            <p className="text-xs text-[#857E95]">{`${currentSize} MB / ${totalSize} MB`}</p>
+            <p className="text-xs text-[#857E95]">{`${currentSize} / ${totalSize}`}</p>
           </div>
           <button className="text-[#794FED]">
             <CancelSVG />
