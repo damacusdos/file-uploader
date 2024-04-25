@@ -6,15 +6,15 @@ interface UploadingFileProps {
   fileName: string;
   currentSize: string;
   totalSize: string;
-  progress: number;
 }
 
 export const UploadingFile = ({
   fileName,
   currentSize,
   totalSize,
-  progress,
 }: UploadingFileProps) => {
+  const progress = (parseInt(currentSize) / parseInt(totalSize)) * 100;
+
   return (
     <div className="w-[440px] flex items-center gap-x-3 bg-white rounded-lg p-2 shadow-16">
       {/* left */}

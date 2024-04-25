@@ -14,6 +14,7 @@ export const Uploader = ({ onUpload }: UploaderProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [NativeTypes.FILE],
     drop(item: { dataTransfer: DataTransfer; files: File[] }) {
+      console.log(item.files);
       onUpload(item.files);
     },
     collect(monitor) {
@@ -22,6 +23,16 @@ export const Uploader = ({ onUpload }: UploaderProps) => {
       };
     },
   }));
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (files) {
+      onUpload(Array.from(files));
+    }
+
+    fileInputRef.current!.value = "";
+  };
 
   return (
     <div
@@ -40,7 +51,13 @@ export const Uploader = ({ onUpload }: UploaderProps) => {
         </h1>
         <p className="text-[#746E82] text-sm">Drag or click to upload</p>
       </button>
-      <input ref={fileInputRef} type="file" className="hidden" />
+      <input
+        ref={fileInputRef}
+        onChange={handleUpload}
+        multiple
+        type="file"
+        className="hidden"
+      />
     </div>
   );
 };
