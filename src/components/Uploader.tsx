@@ -14,7 +14,6 @@ export const Uploader = ({ onUpload }: UploaderProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [NativeTypes.FILE],
     drop(item: { dataTransfer: DataTransfer; files: File[] }) {
-      console.log(item.files);
       onUpload(item.files);
     },
     collect(monitor) {
