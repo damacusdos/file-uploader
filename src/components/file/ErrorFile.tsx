@@ -8,6 +8,8 @@ interface ErrorFileProps {
 }
 
 export const ErrorFile = ({ fileName, fileSize }: ErrorFileProps) => {
+  const handleRemoveFile = () => {};
+
   return (
     <div className="w-[440px] flex items-center gap-x-3 bg-white rounded-lg p-2 shadow-16">
       {/* left */}
@@ -23,7 +25,7 @@ export const ErrorFile = ({ fileName, fileSize }: ErrorFileProps) => {
             </h1>
             <p className="text-xs text-[#857E95]">{`${fileSize} MB`}</p>
           </div>
-          <button className="text-[#794FED]">
+          <button onClick={handleRemoveFile} className="text-[#794FED]">
             <RetrySVG />
           </button>
         </div>
