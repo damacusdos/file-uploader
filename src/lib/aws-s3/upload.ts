@@ -2,14 +2,16 @@ import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { s3Client } from "./config";
 import axios from "axios";
 
+const AWS_S3_BUCKET_NAME = import.meta.env.VITE_AWS_S3_BUCKET_NAME ?? "";
+
 type UploadFileToS3 = {
   file: File;
 };
 
 export async function uploadFileToS3({ file }: UploadFileToS3) {
   // get presigned url
-  const { url } = await createPresignedPost(s3Client, {
-    Bucket: "",
+  const { url, fields } = await createPresignedPost(s3Client, {
+    Bucket: AWS_S3_BUCKET_NAME,
     Key: file.name,
     Fields: {
       "Content-Type": file.type,
@@ -17,9 +19,15 @@ export async function uploadFileToS3({ file }: UploadFileToS3) {
     Expires: 600,
   });
 
-  // use form data to upload file
-  const formData = new FormData();
-  formData.append("file", file);
-
-  await axios.post(url, formData);
+  await axios.create()({
+    url: url,
+    method: "post",
+    data: { ...fields, file: file },
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    onUploadProgress(progressEvent) {
+      console.log(progressEvent);
+    },
+  });
 }

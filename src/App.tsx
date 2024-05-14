@@ -1,6 +1,7 @@
 import React from "react";
 import { DnDUploader } from "@components/Uploader";
 import { UploadingFile, SuccessFile, ErrorFile } from "@components/file";
+import { uploadFileToS3 } from "./lib/aws-s3";
 // utils
 // import { returnFileSize } from "./lib/utils";
 
@@ -21,6 +22,9 @@ function App() {
   const [files, setFiles] = React.useState<UploadedFiles>({});
 
   const handleUpload = (files: File[]) => {
+    // call s3 upload function
+    uploadFileToS3({ file: files[0] });
+
     setFiles((prev) => {
       let newFiles = {};
       files.forEach((file) => {
