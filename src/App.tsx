@@ -31,7 +31,6 @@ function App() {
 
     if (currentSize === totalSize) {
       const uploadedFile = { ...newFile, status: UploadStatus.Success };
-      console.log(uploadedFile);
       setFiles((prev) => ({ ...prev, [uploadedFile.id]: uploadedFile }));
     } else {
       const uploadingFile = { ...newFile, currentSize };
