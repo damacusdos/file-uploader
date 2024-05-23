@@ -1,19 +1,23 @@
 import React from "react";
 import { DnDUploader } from "@components/Uploader";
 import { UploadingFile, SuccessFile, ErrorFile } from "@components/file";
-import { uploadFileToS3 } from "./lib/aws-s3";
-// utils
-// import { returnFileSize } from "./lib/utils";
+import { uploadFileToS3 } from "@libs/aws-s3";
+import { v4 as uuidv4 } from "uuid";
+// type
+import { AxiosProgressEvent } from "axios";
 
-// const getProgress = (number: number) => {
-//   return Math.round((number / 1000000) * 100);
-// };
+enum UploadStatus {
+  Uploading = "Uploading",
+  Success = "Success",
+  Error = "Error",
+}
+
 type UploadFile = {
   id: string;
   name: string;
   currentSize: number;
   totalSize: number;
-  isComplete: boolean;
+  status: UploadStatus;
 };
 
 type UploadedFiles = Record<string, UploadFile>;
@@ -21,27 +25,45 @@ type UploadedFiles = Record<string, UploadFile>;
 function App() {
   const [files, setFiles] = React.useState<UploadedFiles>({});
 
-  const handleUpload = (files: File[]) => {
+  const onUploadProgress = (e: AxiosProgressEvent, newFile: UploadFile) => {
+    const currentSize = e.loaded;
+    const totalSize = e.total;
+
+    if (currentSize === totalSize) {
+      const uploadedFile = { ...newFile, status: UploadStatus.Success };
+      console.log(uploadedFile);
+      setFiles((prev) => ({ ...prev, [uploadedFile.id]: uploadedFile }));
+    } else {
+      const uploadingFile = { ...newFile, currentSize };
+      setFiles((prev) => ({ ...prev, [uploadingFile.id]: uploadingFile }));
+    }
+  };
+
+  const handleUpload = async (files: File[]) => {
     // call s3 upload function
-    uploadFileToS3({ file: files[0] });
-
-    setFiles((prev) => {
-      let newFiles = {};
-      files.forEach((file) => {
-        return (newFiles = {
-          ...newFiles,
-          [file.name]: {
-            id: file.name,
-            name: file.name,
-            currentSize: file.size,
-            totalSize: file.size,
-            isComplete: true,
-          },
+    for (const file of files) {
+      const fileId = uuidv4();
+      const newFile = {
+        [fileId]: {
+          id: fileId,
+          name: file.name,
+          currentSize: 0,
+          totalSize: file.size,
+          status: UploadStatus.Uploading,
+        },
+      };
+      setFiles((prev) => ({ ...prev, ...newFile }));
+      try {
+        await uploadFileToS3({
+          file,
+          onUploadProgress: (e) => onUploadProgress(e, newFile[fileId]),
         });
-      });
-
-      return { ...prev, ...newFiles };
-    });
+      } catch (error) {
+        console.error(error);
+        const errorFile = { ...newFile[fileId], status: UploadStatus.Error };
+        setFiles((prev) => ({ ...prev, [fileId]: errorFile }));
+      }
+    }
   };
 
   return (
@@ -49,20 +71,32 @@ function App() {
       <DnDUploader onUpload={handleUpload} />
       <div className="mt-5 flex flex-col gap-y-3">
         {Object.keys(files).map((file) => {
-          const { name, currentSize, totalSize, isComplete } = files[file];
+          const { id, name, currentSize, totalSize, status } = files[file];
 
-          return isComplete ? (
-            <SuccessFile key={name} fileName={name} fileSize={totalSize} />
-          ) : (
-            <UploadingFile
-              key={name}
-              fileName={name}
-              currentSize={currentSize.toString()}
-              totalSize={totalSize.toString()}
-            />
-          );
+          switch (status) {
+            case UploadStatus.Uploading:
+              return (
+                <UploadingFile
+                  key={id}
+                  fileName={name}
+                  currentSize={currentSize.toString()}
+                  totalSize={totalSize.toString()}
+                />
+              );
+            case UploadStatus.Success:
+              return (
+                <SuccessFile key={id} fileName={name} fileSize={totalSize} />
+              );
+            case UploadStatus.Error:
+              return (
+                <ErrorFile key={id} fileName={name} fileSize={totalSize} />
+              );
+            default:
+              return (
+                <SuccessFile key={id} fileName={name} fileSize={totalSize} />
+              );
+          }
         })}
-        <ErrorFile fileName="a-song.mp3" fileSize={3} />
       </div>
     </div>
   );

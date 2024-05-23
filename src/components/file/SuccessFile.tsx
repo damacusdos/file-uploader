@@ -1,5 +1,7 @@
 // icons
 import FileSVG from "@assets/File.svg?react";
+// utils
+import { returnFileSize } from "@libs/utils";
 
 interface SuccessFileProps {
   fileName: string;
@@ -20,7 +22,7 @@ export const SuccessFile = ({ fileName, fileSize }: SuccessFileProps) => {
             <h1 className="font-bold text-sm text-[#575361] mb-[2px]">
               {fileName}
             </h1>
-            <p className="text-xs text-[#857E95]">{`${fileSize} MB`}</p>
+            <p className="text-xs text-[#857E95]">{returnFileSize(fileSize)}</p>
           </div>
         </div>
         {/* progress bar */}
