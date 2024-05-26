@@ -12,4 +12,5 @@ export default defineConfig({
       "@libs": "/src/libs",
     },
   },
+  base: "/file-uploader/",
 });
