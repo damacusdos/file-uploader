@@ -39,6 +39,11 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env: 
+          VITE_AWS_ACCESS_KEY_ID: ${{ secrets.VITE_AWS_ACCESS_KEY_ID }}
+          VITE_AWS_SECRET_ACCESS_KEY: ${{ secrets.VITE_AWS_SECRET_ACCESS_KEY }}
+          VITE_AWS_S3_REGION: ${{ secrets.VITE_AWS_S3_REGION }}
+          VITE_AWS_S3_BUCKET_NAME: ${{ secrets.VITE_AWS_S3_BUCKET_NAME }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
